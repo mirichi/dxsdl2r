@@ -78,14 +78,62 @@ module DXRuby
 
     # ピクセルに色を置く
     def []=(x, y, color)
-      @_pixels[x, y] = DXRuby._convert_color_dxruby_to_sdl(color)
-      self._modify
+      begin
+        @_pixels[x, y] = DXRuby._convert_color_dxruby_to_sdl(color)
+        self._modify
+      rescue SDL::SDL2RError
+        # 範囲外指定の場合に出るエラーは無視する
+      end
       color
     end
 
     # ピクセルの色を取得する
     def [](x, y)
       DXRuby._convert_color_sdl_to_dxruby(@_pixels[x, y])
+    end
+
+    # 円を描画する
+    def circle(x, y, r, color)
+      xm = x
+      ym = y
+      diameter = r * 2
+      col = DXRuby._convert_color_dxruby_to_sdl(color)
+
+      cx = 0
+      cy = diameter / 2 + 1
+      d = -diameter * diameter + 4 * cy * cy -4 * cy + 2
+      dx = 4
+      dy = -8 * cy + 8
+      if (diameter & 1) == 0
+        xm -= 1
+        ym -= 1
+      end
+
+      cx = 0
+      while cx <= cy do
+        if d > 0 
+            d += dy
+            dy += 8
+            cy -= 1
+        end
+
+        self[ - cy + x, - cx + y ] = col
+        self[ - cx + x, - cy + y ] = col
+
+        self[ + cx + xm, - cy + y ] = col
+        self[ + cy + xm, - cx + y ] = col
+
+        self[ + cy + xm, + cx + ym ] = col
+        self[ + cx + xm, + cy + ym ] = col
+
+        self[ - cx + x, + cy + ym ] = col
+        self[ - cy + x, + cx + ym ] = col
+
+        d += dx
+        dx += 8
+        cx += 1
+      end
+      self
     end
   end
 end
