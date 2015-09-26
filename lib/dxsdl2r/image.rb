@@ -78,16 +78,14 @@ module DXRuby
 
     # ピクセルに色を置く
     def []=(x, y, color)
-      tmp = @_pixels[x, y] = DXRuby._convert_color_dxruby_to_sdl(color)
+      @_pixels[x, y] = DXRuby._convert_color_dxruby_to_sdl(color)
       self._modify
-      tmp
+      color
     end
 
     # ピクセルの色を取得する
     def [](x, y)
-      tmp = @_pixels[x, y]
-      self._modify
-      DXRuby._convert_color_sdl_to_dxruby(tmp)
+      DXRuby._convert_color_sdl_to_dxruby(@_pixels[x, y])
     end
   end
 end
