@@ -133,6 +133,7 @@ module DXRuby
         dx += 8
         cx += 1
       end
+      self._modify
       self
     end
   end
