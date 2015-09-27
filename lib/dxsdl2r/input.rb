@@ -2,23 +2,23 @@ require 'sdl2r'
 
 module DXRuby
   module Input
-    # ƒ}ƒEƒX‚Ìî•ñ
+    # ãƒã‚¦ã‚¹ã®æƒ…å ±
     @_mouse_button = @_mouse_x = @_mouse_y = 0
     @_old_mouse_button = @_old_mouse_x = @_old_mouse_y = 0
 
-    # ƒL[ƒ{[ƒh‚Ìî•ñ
+    # ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã®æƒ…å ±
     @_keys = []
     @_old_keys = []
 
-    # “à•”î•ñ‚ÌŒöŠJ
+    # å†…éƒ¨æƒ…å ±ã®å…¬é–‹
     def self._mouse_button;@_mouse_button;end
     def self._old_mouse_button;@_old_mouse_button;end
     def self._keys;@_keys;end
     def self._old_keys;@_old_keys;end
 
-    # ƒ}ƒEƒXƒ{ƒ^ƒ“”»’è—pƒNƒ‰ƒX
+    # ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³åˆ¤å®šç”¨ã‚¯ãƒ©ã‚¹
     class MouseButton
-      def initialize(b) # 1‚ª¶A2‚ª^‚ñ’†A3‚ª‰E
+      def initialize(b) # 1ãŒå·¦ã€2ãŒçœŸã‚“ä¸­ã€3ãŒå³
         @_button = b
       end
 
@@ -37,7 +37,7 @@ module DXRuby
       end
     end
 
-    # ƒL[ƒ{[ƒh”»’è—pƒNƒ‰ƒX
+    # ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰åˆ¤å®šç”¨ã‚¯ãƒ©ã‚¹
     class Keyboard
       def initialize(k)
         @_key = k
@@ -56,8 +56,8 @@ module DXRuby
       end
     end
 
-    # Šeí”»’èƒƒ\ƒbƒh
-    # ˆê‰DXRubyŒİŠ·‚Å•¡”—pˆÓ‚µ‚Ä‚¢‚é‚ª’†g‚Í‚Ç‚ê‚à“¯‚¶
+    # å„ç¨®åˆ¤å®šãƒ¡ã‚½ãƒƒãƒ‰
+    # ä¸€å¿œDXRubyäº’æ›ã§è¤‡æ•°ç”¨æ„ã—ã¦ã„ã‚‹ãŒä¸­èº«ã¯ã©ã‚Œã‚‚åŒã˜
     def self.push?(button);button.push?;end
     def self.down?(button);button.down?;end
     def self.release?(button);button.release?;end
@@ -91,15 +91,15 @@ module DXRuby
     end
 
     def self.update
-      # ‰Ÿ‚³‚ê‚Ä‚¢‚éƒL[ˆê——‚ğæ“¾‚·‚é
+      # æŠ¼ã•ã‚Œã¦ã„ã‚‹ã‚­ãƒ¼ä¸€è¦§ã‚’å–å¾—ã™ã‚‹
       @_old_keys = @_keys
       @_keys = SDL.get_keyboard_state
 
-      # ƒ}ƒEƒX‚Ìó‘Ô‚ğæ“¾‚·‚é
+      # ãƒã‚¦ã‚¹ã®çŠ¶æ…‹ã‚’å–å¾—ã™ã‚‹
       @_old_mouse_button, @_old_mouse_x, @_old_mouse_y = @_mouse_button, @_mouse_x, @_mouse_y
       @_mouse_button, @_mouse_x, @_mouse_y = SDL.get_mouse_state
 
-      # SDL2‚ÌƒCƒxƒ“ƒgˆ—
+      # SDL2ã®ã‚¤ãƒ™ãƒ³ãƒˆå‡¦ç†
       while event = SDL.poll_event do
         case event.type
         when SDL::QUIT
@@ -110,7 +110,7 @@ module DXRuby
     end
   end
 
-  # ƒ{ƒ^ƒ“’è”
+  # ãƒœã‚¿ãƒ³å®šæ•°
   M_LBUTTON = Input::MouseButton.new(1)
   M_MBUTTON = Input::MouseButton.new(2)
   M_RBUTTON = Input::MouseButton.new(3)

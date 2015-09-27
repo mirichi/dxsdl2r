@@ -18,8 +18,8 @@ module DXRuby
       cy.times do |y|
         cx.times do |x|
           tmp = Image.new(0, 0)
-          # IntelCPU‚ÍƒŠƒgƒ‹ƒGƒ“ƒfƒBƒAƒ“‚¾‚ªƒrƒbƒOƒGƒ“ƒfƒBƒAƒ“‚É‚àˆê‰‘Î‰‚µ‚Ä‚¨‚­
-          # ‰æ‘œƒtƒH[ƒ}ƒbƒg‚Í32bitŒÅ’è
+          # IntelCPUã¯ãƒªãƒˆãƒ«ã‚¨ãƒ³ãƒ‡ã‚£ã‚¢ãƒ³ã ãŒãƒ“ãƒƒã‚°ã‚¨ãƒ³ãƒ‡ã‚£ã‚¢ãƒ³ã«ã‚‚ä¸€å¿œå¯¾å¿œã—ã¦ãŠã
+          # ç”»åƒãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã¯32bitå›ºå®š
           if SDL::BYTEORDER == SDL::BIG_ENDIAN
             tmp._surface = SDL.create_rgb_surface(0, w / cx, h / cy, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff)
           else
@@ -34,21 +34,21 @@ module DXRuby
     end
 
     def initialize(w, h, color=[0, 0, 0, 0])
-      # w‚Æh‚Ì—¼•û‚ª0‚Ìê‡‚ÍSurface‚ğ¶¬‚µ‚È‚¢
+      # wã¨hã®ä¸¡æ–¹ãŒ0ã®å ´åˆã¯Surfaceã‚’ç”Ÿæˆã—ãªã„
       return if w == 0 and h == 0
 
-      # IntelCPU‚ÍƒŠƒgƒ‹ƒGƒ“ƒfƒBƒAƒ“‚¾‚ªƒrƒbƒOƒGƒ“ƒfƒBƒAƒ“‚É‚àˆê‰‘Î‰‚µ‚Ä‚¨‚­
-      # ‰æ‘œƒtƒH[ƒ}ƒbƒg‚Í32bitŒÅ’è
+      # IntelCPUã¯ãƒªãƒˆãƒ«ã‚¨ãƒ³ãƒ‡ã‚£ã‚¢ãƒ³ã ãŒãƒ“ãƒƒã‚°ã‚¨ãƒ³ãƒ‡ã‚£ã‚¢ãƒ³ã«ã‚‚ä¸€å¿œå¯¾å¿œã—ã¦ãŠã
+      # ç”»åƒãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã¯32bitå›ºå®š
       if SDL::BYTEORDER == SDL::BIG_ENDIAN
         @_surface = SDL.create_rgb_surface(0, w, h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff)
       else
         @_surface = SDL.create_rgb_surface(0, w, h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000)
       end
 
-      # w’èF‚Å“h‚è‚Â‚Ô‚·
+      # æŒ‡å®šè‰²ã§å¡—ã‚Šã¤ã¶ã™
       SDL.fill_rect(@_surface, nil, DXRuby._convert_color_dxruby_to_sdl(color))
 
-      # PixelsƒIƒuƒWƒFƒNƒgæ“¾
+      # Pixelsã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
       @_pixels = @_surface.pixels
     end
 
@@ -60,8 +60,8 @@ module DXRuby
       @_surface.h
     end
 
-    # ƒeƒNƒXƒ`ƒƒ‚ğ”jŠü‚·‚é
-    # Ÿ‚É•`‰æ‚Åg‚í‚ê‚éÛ‚ÉÄ¶¬‚³‚ê‚é
+    # ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ç ´æ£„ã™ã‚‹
+    # æ¬¡ã«æç”»ã§ä½¿ã‚ã‚Œã‚‹éš›ã«å†ç”Ÿæˆã•ã‚Œã‚‹
     def _modify
       if @_texture
         SDL.destroy_texture(@_texture)
@@ -70,25 +70,25 @@ module DXRuby
       nil
     end
 
-    # ƒeƒNƒXƒ`ƒƒ¶¬
+    # ãƒ†ã‚¯ã‚¹ãƒãƒ£ç”Ÿæˆ
     def _create_texture
-      # ƒeƒNƒXƒ`ƒƒ¶¬
+      # ãƒ†ã‚¯ã‚¹ãƒãƒ£ç”Ÿæˆ
       @_texture = SDL.create_texture_from_surface(Window._renderer, @_surface)
     end
 
-    # ƒsƒNƒZƒ‹‚ÉF‚ğ’u‚­
+    # ãƒ”ã‚¯ã‚»ãƒ«ã«è‰²ã‚’ç½®ã
     def []=(x, y, color)
       self._set_pixel(x, y, DXRuby._convert_color_dxruby_to_sdl(color))
       self._modify
       color
     end
 
-    # ƒsƒNƒZƒ‹‚ÌF‚ğæ“¾‚·‚é
+    # ãƒ”ã‚¯ã‚»ãƒ«ã®è‰²ã‚’å–å¾—ã™ã‚‹
     def [](x, y)
       DXRuby._convert_color_sdl_to_dxruby(@_pixels[x, y])
     end
 
-    # ‰~‚ğ•`‰æ‚·‚é
+    # å††ã‚’æç”»ã™ã‚‹
     def circle(x, y, r, color)
       xm = x
       ym = y
@@ -133,7 +133,7 @@ module DXRuby
       self
     end
 
-    # “h‚è‚Â‚Ô‚µ‚½‰~‚ğ•`‰æ‚·‚é
+    # å¡—ã‚Šã¤ã¶ã—ãŸå††ã‚’æç”»ã™ã‚‹
     def circle_fill(x, y, r, color)
       xm = x
       ym = y
@@ -171,13 +171,13 @@ module DXRuby
       self
     end
 
-    # ü‚ğ•`‰æ‚·‚é
+    # ç·šã‚’æç”»ã™ã‚‹
     def line(x1, y1, x2, y2, color)
       dx = x2 > x1 ? x2 - x1 : x1 - x2
       dy = y2 > y1 ? y2 - y1 : y1 - y2
       col = DXRuby._convert_color_dxruby_to_sdl(color)
   
-      # ƒuƒŒƒ[ƒ“ƒnƒ€ƒAƒ‹ƒSƒŠƒYƒ€‚É‚æ‚éü•ª•`‰æ
+      # ãƒ–ãƒ¬ã‚¼ãƒ³ãƒãƒ ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ ã«ã‚ˆã‚‹ç·šåˆ†æç”»
       if dx < dy
         xp = x1 < x2 ? 1 : -1
         d = y1 < y2 ? 1 : -1
@@ -213,7 +213,7 @@ module DXRuby
       self
     end
 
-    # lŠp‚ğ•`‰æ‚·‚é
+    # å››è§’ã‚’æç”»ã™ã‚‹
     def box(x1, y1, x2, y2, color)
       col = DXRuby._convert_color_dxruby_to_sdl(color)
       self._hline(x1, x2, y1, col)
@@ -224,7 +224,7 @@ module DXRuby
       self
     end
 
-    # “h‚è‚Â‚Ô‚µ‚½lŠp‚ğ•`‰æ‚·‚é
+    # å¡—ã‚Šã¤ã¶ã—ãŸå››è§’ã‚’æç”»ã™ã‚‹
     def box_fill(x1, y1, x2, y2, color)
       col = DXRuby._convert_color_dxruby_to_sdl(color)
 
@@ -245,7 +245,7 @@ module DXRuby
       self
     end
 
-    # ‘S‘Ì‚ğ“h‚è‚Â‚Ô‚·
+    # å…¨ä½“ã‚’å¡—ã‚Šã¤ã¶ã™
     def clear(color=[0, 0, 0, 0])
       col = DXRuby._convert_color_dxruby_to_sdl(color)
       SDL.fill_rect(@_surface, nil, col)
@@ -253,17 +253,17 @@ module DXRuby
       self
     end
 
-    # “à•”—p“_•`‰æ
+    # å†…éƒ¨ç”¨ç‚¹æç”»
     def _set_pixel(x, y, color)
       begin
         @_pixels[x, y] = color
       rescue SDL::SDL2RError
-        # ”ÍˆÍŠOw’è‚Ìê‡‚Éo‚éƒGƒ‰[‚Í–³‹‚·‚é
+        # ç¯„å›²å¤–æŒ‡å®šã®å ´åˆã«å‡ºã‚‹ã‚¨ãƒ©ãƒ¼ã¯ç„¡è¦–ã™ã‚‹
       end
     end
 
-    # “à•”ˆ——p…•½ƒ‰ƒCƒ“•`‰æ
-    # x1<=x2‚Å‚ ‚é‚±‚ÆBcol‚Ísdl2r‚ÌF”z—ñ‚Å‚ ‚é‚±‚Æ
+    # å†…éƒ¨å‡¦ç†ç”¨æ°´å¹³ãƒ©ã‚¤ãƒ³æç”»
+    # x1<=x2ã§ã‚ã‚‹ã“ã¨ã€‚colã¯sdl2rã®è‰²é…åˆ—ã§ã‚ã‚‹ã“ã¨
     def _hline(x1, x2, y, col)
       x = x1
       while x <= x2
@@ -272,8 +272,8 @@ module DXRuby
       end
     end
 
-    # “à•”ˆ——p‚’¼ƒ‰ƒCƒ“•`‰æ
-    # y1<=y2‚Å‚ ‚é‚±‚ÆBcol‚Ísdl2r‚ÌF”z—ñ‚Å‚ ‚é‚±‚Æ
+    # å†…éƒ¨å‡¦ç†ç”¨å‚ç›´ãƒ©ã‚¤ãƒ³æç”»
+    # y1<=y2ã§ã‚ã‚‹ã“ã¨ã€‚colã¯sdl2rã®è‰²é…åˆ—ã§ã‚ã‚‹ã“ã¨
     def _vline(x, y1, y2, col)
       y = y1
       while y <= y2

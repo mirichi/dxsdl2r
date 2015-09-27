@@ -14,7 +14,7 @@ module DXRuby
     @_renderer = SDL.create_renderer(@_window, -1, 0)
     @_render_target = RenderTarget.new(0, 0, [0, 0, 0])
 
-    # •`‰æ—\–ñ”z—ñ
+    # æç”»äºˆç´„é…åˆ—
     @_reservation = []
 
     def self.width;@_width;end

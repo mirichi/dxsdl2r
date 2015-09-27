@@ -1,4 +1,3 @@
-#!ruby -Ks
 require_relative "./../lib/dxsdl2r.rb"
 
 class Ruby < Sprite
@@ -6,22 +5,22 @@ class Ruby < Sprite
   MAX_X = 639 - 32
   MAX_Y = 479 - 32
 
-  # ImageƒIƒuƒWƒFƒNƒg‚ðì¬
+  # Imageã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½œæˆ
   @@image = Image.load("./image/ruby.png")
 
-  # ‰Šú‰»ƒƒ\ƒbƒh
+  # åˆæœŸåŒ–ãƒ¡ã‚½ãƒƒãƒ‰
   def initialize
     super
-    self.x = rand(MAX_X)+1 # xÀ•W
-    self.y = rand(MAX_Y)+1 # yÀ•W
-    self.image = @@image  # ‰æ‘œ
-    self.target = RT      # •`‰ææ
+    self.x = rand(MAX_X)+1 # xåº§æ¨™
+    self.y = rand(MAX_Y)+1 # yåº§æ¨™
+    self.image = @@image  # ç”»åƒ
+    self.target = RT      # æç”»å…ˆ
 
-    @dx = rand(2) * 2 - 1 # x‘•ª
-    @dy = rand(2) * 2 - 1 # y‘•ª
+    @dx = rand(2) * 2 - 1 # xå¢—åˆ†
+    @dy = rand(2) * 2 - 1 # yå¢—åˆ†
   end
 
-  # XV
+  # æ›´æ–°
   def update
     self.x += @dx
     self.y += @dy
@@ -34,22 +33,22 @@ class Ruby < Sprite
   end
 end
 
-# Sprite ƒIƒuƒWƒFƒNƒg‚Ì”z—ñ‚ð¶¬‚·‚éB
+# Sprite ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®é…åˆ—ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 sprites = Array.new(2500){ Ruby.new }
 
 font = Font.new(32)
 
-# ƒEƒBƒ“ƒhƒE‚ÌƒLƒƒƒvƒVƒ‡ƒ“‚ðÝ’è‚·‚éB 
+# ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³ã‚’è¨­å®šã™ã‚‹ã€‚ 
 Window.caption = "Sprites"
 
-# fps‚ðÝ’è‚·‚éB
+# fpsã‚’è¨­å®šã™ã‚‹ã€‚
 Window.fps = 60
 
-# ƒƒCƒ“ƒ‹[ƒvB
-# ƒEƒBƒ“ƒhƒE‚ª•Â‚¶‚ç‚ê‚½ê‡‚ÍŽ©“®“I‚ÉI—¹‚·‚éB
-# ‰æ–Ê‚Í–ˆƒtƒŒ[ƒ€ƒŠƒZƒbƒg‚³‚ê‚éB
+# ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—ã€‚
+# ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒé–‰ã˜ã‚‰ã‚ŒãŸå ´åˆã¯è‡ªå‹•çš„ã«çµ‚äº†ã™ã‚‹ã€‚
+# ç”»é¢ã¯æ¯Žãƒ•ãƒ¬ãƒ¼ãƒ ãƒªã‚»ãƒƒãƒˆã•ã‚Œã‚‹ã€‚
 Window.loop do
-  # ESC ƒL[‚ª‰Ÿ‚³‚ê‚½ê‡I—¹‚·‚éB
+  # ESC ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸå ´åˆçµ‚äº†ã™ã‚‹ã€‚
   break if Input.key_push?(K_ESCAPE)
 
   Sprite.update(sprites)

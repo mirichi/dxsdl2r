@@ -4,20 +4,20 @@ module DXRuby
   class Font
     attr_accessor :_font
 
-    # {ƒtƒ@ƒCƒ‹–¼=>{ƒtƒFƒCƒX‚Ìƒtƒ@ƒ~ƒŠ[–¼=>index}}‚Æ‚¢‚¤ƒnƒbƒVƒ…‚Åî•ñ‚ğ•Û‚·‚é
+    # {ãƒ•ã‚¡ã‚¤ãƒ«å=>{ãƒ•ã‚§ã‚¤ã‚¹ã®ãƒ•ã‚¡ãƒŸãƒªãƒ¼å=>index}}ã¨ã„ã†ãƒãƒƒã‚·ãƒ¥ã§æƒ…å ±ã‚’ä¿æŒã™ã‚‹
     @@_fonts = {}
 
     def self.install(filename)
       tmp = {}
       result = []
 
-      # î•ñ‚ğ“¾‚é‚½‚ß‚É‚Æ‚è‚ ‚¦‚¸open‚µ‚Ä‚İ‚é
+      # æƒ…å ±ã‚’å¾—ã‚‹ãŸã‚ã«ã¨ã‚Šã‚ãˆãšopenã—ã¦ã¿ã‚‹
       font = SDL::TTF.open_font(filename, 24)
       name = SDL::TTF.font_face_family_name(font)
       tmp[name] = 0
       result << name
 
-      # •¡”ƒtƒFƒCƒX‚ ‚éê‡‚Í‘S•”open‚µ‚Ä‚İ‚é
+      # è¤‡æ•°ãƒ•ã‚§ã‚¤ã‚¹ã‚ã‚‹å ´åˆã¯å…¨éƒ¨openã—ã¦ã¿ã‚‹
       (1...SDL::TTF.font_faces(font)).each do |i|
         fontt = SDL::TTF.open_font_index(filename, 24, i)
         name = SDL::TTF.font_face_family_name(fontt)

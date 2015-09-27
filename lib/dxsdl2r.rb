@@ -7,7 +7,7 @@ module DXRuby
   C_WHITE = [255, 255, 255]
   C_RED = [255, 0, 0]
 
-  # DXRuby色配列からSDL::Color色配列へ変換
+  # DXRuby濶ｲ驟榊�励°繧唄DL::Color濶ｲ驟榊�励∈螟画鋤
   def self._convert_color_dxruby_to_sdl(color)
     if color.size == 4
       color[1..3] << color[0]
