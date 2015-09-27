@@ -78,12 +78,8 @@ module DXRuby
 
     # ピクセルに色を置く
     def []=(x, y, color)
-      begin
-        @_pixels[x, y] = DXRuby._convert_color_dxruby_to_sdl(color)
-        self._modify
-      rescue SDL::SDL2RError
-        # 範囲外指定の場合に出るエラーは無視する
-      end
+      self._set_pixel(x, y, DXRuby._convert_color_dxruby_to_sdl(color))
+      self._modify
       color
     end
 
@@ -117,17 +113,17 @@ module DXRuby
             cy -= 1
         end
 
-        self[ - cy + x, - cx + y ] = col
-        self[ - cx + x, - cy + y ] = col
+        self._set_pixel(- cy + x, - cx + y, col)
+        self._set_pixel( - cx + x, - cy + y, col)
 
-        self[ + cx + xm, - cy + y ] = col
-        self[ + cy + xm, - cx + y ] = col
+        self._set_pixel( + cx + xm, - cy + y, col)
+        self._set_pixel( + cy + xm, - cx + y, col)
 
-        self[ + cy + xm, + cx + ym ] = col
-        self[ + cx + xm, + cy + ym ] = col
+        self._set_pixel( + cy + xm, + cx + ym, col)
+        self._set_pixel( + cx + xm, + cy + ym, col)
 
-        self[ - cx + x, + cy + ym ] = col
-        self[ - cy + x, + cx + ym ] = col
+        self._set_pixel( - cx + x, + cy + ym, col)
+        self._set_pixel( - cy + x, + cx + ym, col)
 
         d += dx
         dx += 8
@@ -135,6 +131,155 @@ module DXRuby
       end
       self._modify
       self
+    end
+
+    # 塗りつぶした円を描画する
+    def circle_fill(x, y, r, color)
+      xm = x
+      ym = y
+      diameter = r * 2
+      col = DXRuby._convert_color_dxruby_to_sdl(color)
+
+      cx = 0
+      cy = diameter / 2 + 1
+      d = -diameter * diameter + 4 * cy * cy -4 * cy + 2
+      dx = 4
+      dy = -8 * cy + 8
+      if (diameter & 1) == 0
+        xm -= 1
+        ym -= 1
+      end
+
+      cx = 0
+      while cx <= cy do
+        if d > 0 
+            d += dy
+            dy += 8
+            cy -= 1
+        end
+
+        self._hline(x - cy, xm + cy, y - cx, col)
+        self._hline(x - cx, xm + cx, y - cy, col)
+        self._hline(x - cy, xm + cy, ym + cx, col)
+        self._hline(x - cx, xm + cx, ym + cy, col)
+
+        d += dx
+        dx += 8
+        cx += 1
+      end
+      self._modify
+      self
+    end
+
+    # 線を描画する
+    def line(x1, y1, x2, y2, color)
+      dx = x2 > x1 ? x2 - x1 : x1 - x2
+      dy = y2 > y1 ? y2 - y1 : y1 - y2
+      col = DXRuby._convert_color_dxruby_to_sdl(color)
+  
+      # ブレゼンハムアルゴリズムによる線分描画
+      if dx < dy
+        xp = x1 < x2 ? 1 : -1
+        d = y1 < y2 ? 1 : -1
+        c = dy
+        i = 0
+        while i <= dy do
+          self._set_pixel(x1, y1, col)
+          y1 = y1 + d
+          c = c + dx*2
+          if c >= dy*2
+            c = c - dy*2
+            x1 = x1 + xp
+          end
+          i += 1
+        end
+      else
+        yp = y1 < y2 ? 1 : -1
+        d = x1 < x2 ? 1 : -1
+        c = dx
+        i = 0
+        while i <= dx do
+          self._set_pixel(x1, y1, col)
+          x1 = x1 + d
+          c = c + dy*2
+          if c >= dx*2
+            c = c - dx*2
+            y1 = y1 + yp
+          end
+          i += 1
+        end
+      end
+      self._modify
+      self
+    end
+
+    # 四角を描画する
+    def box(x1, y1, x2, y2, color)
+      col = DXRuby._convert_color_dxruby_to_sdl(color)
+      self._hline(x1, x2, y1, col)
+      self._vline(x2, y1, y2, col)
+      self._vline(x1, y1, y2, col)
+      self._hline(x1, x2, y2, col)
+      self._modify
+      self
+    end
+
+    # 塗りつぶした四角を描画する
+    def box_fill(x1, y1, x2, y2, color)
+      col = DXRuby._convert_color_dxruby_to_sdl(color)
+
+      if x1 > x2
+        tmp = x1
+        x1 = x2
+        x2 = tmp
+      end
+      if y1 > y2
+        tmp = y1
+        y1 = y2
+        y2 = tmp
+      end
+
+      SDL.fill_rect(@_surface, SDL::Rect.new(x1, y1, x2 - x1 + 1, y2 - y1 + 1), col)
+
+      self._modify
+      self
+    end
+
+    # 全体を塗りつぶす
+    def clear(color=[0, 0, 0, 0])
+      col = DXRuby._convert_color_dxruby_to_sdl(color)
+      SDL.fill_rect(@_surface, nil, col)
+      self._modify
+      self
+    end
+
+    # 内部用点描画
+    def _set_pixel(x, y, color)
+      begin
+        @_pixels[x, y] = color
+      rescue SDL::SDL2RError
+        # 範囲外指定の場合に出るエラーは無視する
+      end
+    end
+
+    # 内部処理用水平ライン描画
+    # x1<=x2であること。colはsdl2rの色配列であること
+    def _hline(x1, x2, y, col)
+      x = x1
+      while x <= x2
+        self._set_pixel(x, y, col)
+        x += 1
+      end
+    end
+
+    # 内部処理用垂直ライン描画
+    # y1<=y2であること。colはsdl2rの色配列であること
+    def _vline(x, y1, y2, col)
+      y = y1
+      while y <= y2
+        self._set_pixel(x, y, col)
+        y += 1
+      end
     end
   end
 end
