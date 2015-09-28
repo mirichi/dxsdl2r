@@ -32,6 +32,10 @@ module DXRuby
       @_render_target.draw(x, y, image, z)
     end
 
+    def self.draw_ex(x, y, image, option={})
+      @_render_target.draw_ex(x, y, image, option)
+    end
+
     def self.draw_font(x, y, str, font, hash = {})
       @_render_target.draw_font(x, y, str, font, hash)
     end

@@ -14,9 +14,9 @@ module DXRuby
     def draw_box_fill(x1, y1, x2, y2, color, z=0)
       tmp = DXRuby._convert_color_dxruby_to_sdl(color)
       prc = ->{
-        SDL.set_render_draw_blend_mode(@_renderer, SDL::BLENDMODE_BLEND)
-        SDL.set_render_draw_color(@_renderer, *tmp)
-        SDL.render_fill_rect(@_renderer, SDL::Rect.new(x1, y1, x2 - x1 + 1, y2 - y1 + 1))
+        SDL.set_render_draw_blend_mode(Window._renderer, SDL::BLENDMODE_BLEND)
+        SDL.set_render_draw_color(Window._renderer, *tmp)
+        SDL.render_fill_rect(Window._renderer, SDL::Rect.new(x1, y1, x2 - x1 + 1, y2 - y1 + 1))
       }
       @_reservation << [z, prc]
     end
@@ -28,6 +28,21 @@ module DXRuby
         SDL.render_copy(Window._renderer, image._texture, nil, SDL::Rect.new(x, y, image.width, image.height))
       }
       @_reservation << [z, prc]
+    end
+
+    def draw_ex(x, y, image, option={})
+      option = {
+        angle: 0,
+        scale_x: 1,
+        scale_y: 1,
+        center_x: 0,
+        center_y: 0,
+        z: 0,
+      }.merge(option)
+      prc = ->{
+        SDL::render_copy_ex(Window._renderer, image._texture, nil, SDL::Rect.new(x, y, image.width, image.height), option[:angle], nil, 0)
+      }
+      @_reservation << [option[:z], prc]
     end
 
     def draw_font(x, y, str, font, hash = {})
