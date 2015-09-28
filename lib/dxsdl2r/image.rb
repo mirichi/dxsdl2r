@@ -60,6 +60,9 @@ module DXRuby
       @_surface.h
     end
 
+    def _auto_update
+    end
+
     # テクスチャを破棄する
     # 次に描画で使われる際に再生成される
     def _modify
@@ -107,7 +110,7 @@ module DXRuby
 
       cx = 0
       while cx <= cy do
-        if d > 0 
+        if d > 0
             d += dy
             dy += 8
             cy -= 1
@@ -152,7 +155,7 @@ module DXRuby
 
       cx = 0
       while cx <= cy do
-        if d > 0 
+        if d > 0
             d += dy
             dy += 8
             cy -= 1
@@ -176,7 +179,7 @@ module DXRuby
       dx = x2 > x1 ? x2 - x1 : x1 - x2
       dy = y2 > y1 ? y2 - y1 : y1 - y2
       col = DXRuby._convert_color_dxruby_to_sdl(color)
-  
+
       # ブレゼンハムアルゴリズムによる線分描画
       if dx < dy
         xp = x1 < x2 ? 1 : -1

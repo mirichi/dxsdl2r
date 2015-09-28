@@ -2,13 +2,19 @@ require 'sdl2r'
 
 module DXRuby
   class RenderTarget
-    attr_accessor :_texture
+    attr_accessor :_texture, :_reservation, :_update_flg
+
+    @@_render_targets = []
+    def self._render_targets
+      @@_render_targets
+    end
 
     def initialize(w, h, bgcolor=[0, 0, 0, 0])
       @_reservation = []
       @_bgcolor = DXRuby._convert_color_dxruby_to_sdl(bgcolor)
       return if w == 0 and h == 0
       @_texture = SDL.create_texture(Window._renderer, SDL::PIXELFORMAT_RGBA8888, SDL::TEXTUREACCESS_TARGET, w, h)
+      @_update_flg = false
     end
 
     def draw_box_fill(x1, y1, x2, y2, color, z=0)
@@ -21,7 +27,19 @@ module DXRuby
       @_reservation << [z, prc]
     end
 
+    def _auto_update
+      if @_reservation.empty?
+        if @_update_flg
+          self.clear
+        end
+      else
+        self.update
+      end
+      @@_render_targets << self
+    end
+
     def draw(x, y, image, z=0)
+      image._auto_update
       prc = ->{
         image._create_texture unless image._texture
         SDL.set_texture_blend_mode(image._texture, SDL::BLENDMODE_BLEND)
@@ -39,7 +57,10 @@ module DXRuby
         center_y: 0,
         z: 0,
       }.merge(option)
+      image._auto_update
       prc = ->{
+        image._create_texture unless image._texture
+        SDL.set_texture_blend_mode(image._texture, SDL::BLENDMODE_BLEND)
         SDL::render_copy_ex(Window._renderer, image._texture, nil, SDL::Rect.new(x, y, image.width, image.height), option[:angle], nil, 0)
       }
       @_reservation << [option[:z], prc]
@@ -67,6 +88,7 @@ module DXRuby
       SDL.set_render_draw_color(Window._renderer, *@_bgcolor)
       SDL.set_render_draw_blend_mode(Window._renderer, SDL::BLENDMODE_NONE)
       SDL.render_fill_rect(Window._renderer, nil)
+      @_update_flg = false
     end
 
     def update

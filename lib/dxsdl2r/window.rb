@@ -52,6 +52,10 @@ module DXRuby
           yield
 
           @_render_target.update
+          RenderTarget._render_targets.each do |r|
+            r._update_flg = true
+          end
+          RenderTarget._render_targets.clear
           SDL.render_present(@_renderer)
         end
       end
