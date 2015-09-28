@@ -68,13 +68,10 @@ module DXRuby
     def self.key_down?(button);button.down?;end
     def self.key_release?(button);button.release?;end
 
-    def self.mouse_x
-      @_mouse_x
-    end
-
-    def self.mouse_y
-      @_mouse_y
-    end
+    def self.mouse_x;@_mouse_x;end
+    def self.mouse_pos_x;@_mouse_x;end
+    def self.mouse_y;@_mouse_y;end
+    def self.mouse_pos_y;@_mouse_y;end
 
     def self.x
       x = 0
@@ -125,4 +122,6 @@ module DXRuby
   K_C       = Input::Keyboard.new(SDL::SCANCODE_C)
   K_LSHIFT  = Input::Keyboard.new(SDL::SCANCODE_LSHIFT)
   K_RSHIFT  = Input::Keyboard.new(SDL::SCANCODE_RSHIFT)
+  K_LCONTROL = Input::Keyboard.new(SDL::SCANCODE_LCTRL)
+  K_RCONTROL = Input::Keyboard.new(SDL::SCANCODE_RCTRL)
 end
