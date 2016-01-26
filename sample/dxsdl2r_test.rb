@@ -1,5 +1,5 @@
 Dir.chdir(File.dirname(__FILE__))
-require_relative './../../lib/dxsdl2r'
+require_relative './../lib/dxsdl2r'
 require_relative './mmd'
 require_relative './motion'
 
@@ -164,7 +164,7 @@ class BoneManager
   end
 end
 
-mmd = MMDModel.load_file("./Lat式ミクVer2.31_Normal.pmd")
+mmd = MMDModel.load_file("./mmd/Lat式ミクVer2.31_Normal.pmd")
 #mmd = MMDModel.load_file("./Lat式ミクVer2.31_Sailor夏服エッジ無し専用.pmd")
 
 bone_manager = BoneManager.new
@@ -174,11 +174,11 @@ toons = mmd.toon_texture.names.map.with_index{|name, i|
   tmp = name.force_encoding("Shift_JIS").encode("UTF-8",:invalid => :replace, :replace => "")
 
   if tmp and tmp.end_with?(".bmp")
-    Image.load("./" + tmp)
+    Image.load("./mmd/" + tmp)
   else
-    Image.load("./toon" + (i + 1).to_s.rjust(2, "0") + ".bmp")
+    Image.load("./mmd/toon" + (i + 1).to_s.rjust(2, "0") + ".bmp")
   end
-} + [Image.load("./toon00.bmp")]
+} + [Image.load("./mmd/toon00.bmp")]
 
 # モデルデータ作成
 model = Model.new
@@ -220,7 +220,7 @@ mmd.materials.each do |m|
   # テクスチャ
   if m.texture
     material.shader.useTexture = 1
-    material.shader.sampler = Image.load(m.texture)
+    material.shader.sampler = Image.load("./mmd/" + m.texture)
   else
     material.shader.useTexture = 0
   end
@@ -228,7 +228,7 @@ mmd.materials.each do |m|
   # スフィアマップ
   if m.sphere
     material.shader.isSphereUse = 1
-    material.shader.sphereSampler = Image.load(m.sphere)
+    material.shader.sphereSampler = Image.load("./mmd/" + m.sphere)
     if m.sphere.end_with?('.spa')
       material.shader.isSphereAdd = 1
     else
@@ -261,7 +261,7 @@ mmd.materials.each do |m|
 end
 
 # モーション読み込み
-motion = MMDMotion.load_file("kashiyuka.vmd")
+motion = MMDMotion.load_file("./mmd/kashiyuka.vmd")
 #motion = MMDMotion.load_file("kishimen.vmd")
 
 # ボーンを名前で検索するためのハッシュ
