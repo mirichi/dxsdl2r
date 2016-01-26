@@ -1,4 +1,5 @@
 require 'sdl2r'
+require_relative './dxsdl2r/glutil.rb'
 
 SDL.init(SDL::INIT_EVERYTHING)
 SDL::TTF.init
@@ -27,6 +28,8 @@ require_relative './dxsdl2r/image.rb'
 require_relative './dxsdl2r/input.rb'
 require_relative './dxsdl2r/sprite.rb'
 require_relative './dxsdl2r/font.rb'
+require_relative './dxsdl2r/shader.rb'
+require_relative './dxsdl2r/matrix.rb'
 
 include DXRuby
 

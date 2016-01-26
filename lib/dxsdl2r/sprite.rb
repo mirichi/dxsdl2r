@@ -53,6 +53,8 @@ module DXRuby
     def collision=(v);@_collision=v;end
     def vanished?;@_vanished;end
     def vanish;@_vanished=true;end
+    def shader=(v);@_shader=v;end
+    def shader;@_shader;end
 
     def initialize(x=0, y=0, image=nil)
       @_x, @_y, @_image = x, y, image
@@ -64,7 +66,11 @@ module DXRuby
       if @_target
         @_target.draw(@_x, @_y, @_image, @_z)
       else
-        Window.draw(@_x, @_y, @_image, @_z)
+        if @_shader
+          Window.draw_shader(@_x, @_y, @_image, @_shader, @_z)
+        else
+          Window.draw(@_x, @_y, @_image, @_z)
+        end
       end
       self
     end

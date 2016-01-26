@@ -11,7 +11,10 @@ module DXRuby
                                   @_width,
                                   @_height,
                                   SDL::WINDOW_HIDDEN)
-    @_renderer = SDL.create_renderer(@_window, -1, 0)
+    @_context = SDL.gl_create_context(@_window)
+    SDL.gl_make_current(@_window, @_context)
+    SDL.gl_set_swap_interval(0)
+    RenderTarget._create_displaylist
     @_render_target = RenderTarget.new(0, 0, [0, 0, 0])
 
     # 描画予約配列
@@ -20,7 +23,7 @@ module DXRuby
     def self.width;@_width;end
     def self.height;@_height;end
     def self._window;@_window;end
-    def self._renderer;@_renderer;end
+    def self._context;@_context;end
     def self.width=(v);@_width=v;end
     def self.height=(v);@_height=v;end
 
@@ -30,6 +33,10 @@ module DXRuby
 
     def self.draw(x, y, image, z=0)
       @_render_target.draw(x, y, image, z)
+    end
+
+    def self.draw_shader(x, y, image, shader, z=0)
+      @_render_target.draw_shader(x, y, image, shader, z)
     end
 
     def self.draw_ex(x, y, image, option={})
@@ -56,7 +63,7 @@ module DXRuby
             r._update_flg = true
           end
           RenderTarget._render_targets.clear
-          SDL.render_present(@_renderer)
+          SDL.gl_swap_window(@_window)
         end
       end
     end

@@ -2,12 +2,46 @@ require 'sdl2r'
 
 module DXRuby
   class Image
-    attr_accessor :_surface, :_texture, :_pixels
+    attr_accessor :_surface, :_texture, :_pixels, :_displaylist_number
+
+    def self._create_gl_texture(width, height, surface=nil)
+      texture = glGenTexture()
+      glBindTexture( GL_TEXTURE_2D, texture )
+      glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface ? surface.pixels.to_s : nil)
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+      glBindTexture( GL_TEXTURE_2D, 0 )
+      texture
+    end
+
+    def self._convert_rgba_surface(surface)
+      tmp_surface = nil
+      if SDL::BYTEORDER == SDL::BIG_ENDIAN
+        tmp_surface = SDL.create_rgb_surface(0, surface.w, surface.h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff)
+      else
+        tmp_surface = SDL.create_rgb_surface(0, surface.w, surface.h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000)
+      end
+      SDL.blit_surface(surface, nil, tmp_surface, nil)
+      tmp_surface
+    end
+
+    def self._create_rgba_surface(width, height)
+      if SDL::BYTEORDER == SDL::BIG_ENDIAN
+        SDL.create_rgb_surface(0, width, height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff)
+      else
+        SDL.create_rgb_surface(0, width, height, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000)
+      end
+    end
 
     def self.load(filename)
       image = Image.new(0, 0)
-      image._surface = SDL::IMG.load(filename)
+      tmp = SDL::IMG.load(filename)
+      image._surface = Image._convert_rgba_surface(tmp)
       image._pixels = image._surface.pixels
+      SDL.free_surface(tmp)
+      image._create_texture
       image
     end
 
@@ -18,15 +52,10 @@ module DXRuby
       cy.times do |y|
         cx.times do |x|
           tmp = Image.new(0, 0)
-          # IntelCPUはリトルエンディアンだがビッグエンディアンにも一応対応しておく
-          # 画像フォーマットは32bit固定
-          if SDL::BYTEORDER == SDL::BIG_ENDIAN
-            tmp._surface = SDL.create_rgb_surface(0, w / cx, h / cy, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff)
-          else
-            tmp._surface = SDL.create_rgb_surface(0, w / cx, h / cy, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000)
-          end
+          tmp._surface = Image._create_rgba_surface(w / cx, h / cy)
           SDL.blit_surface(surface, SDL::Rect.new(w / cx * x, h / cy * y, w / cx, h / cy), tmp._surface, nil)
           tmp._pixels = tmp._surface.pixels
+          tmp._create_texture
           ary << tmp
         end
       end
@@ -34,16 +63,11 @@ module DXRuby
     end
 
     def initialize(w, h, color=[0, 0, 0, 0])
+      @_displaylist_number = 0
       # wとhの両方が0の場合はSurfaceを生成しない
       return if w == 0 and h == 0
 
-      # IntelCPUはリトルエンディアンだがビッグエンディアンにも一応対応しておく
-      # 画像フォーマットは32bit固定
-      if SDL::BYTEORDER == SDL::BIG_ENDIAN
-        @_surface = SDL.create_rgb_surface(0, w, h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff)
-      else
-        @_surface = SDL.create_rgb_surface(0, w, h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000)
-      end
+      @_surface = Image._create_rgba_surface(w, h)
 
       # 指定色で塗りつぶす
       SDL.fill_rect(@_surface, nil, DXRuby._convert_color_dxruby_to_sdl(color))
@@ -67,7 +91,7 @@ module DXRuby
     # 次に描画で使われる際に再生成される
     def _modify
       if @_texture
-        SDL.destroy_texture(@_texture)
+        glDeleteTextures(1, @_texture)
         @_texture = nil
       end
       nil
@@ -76,7 +100,7 @@ module DXRuby
     # テクスチャ生成
     def _create_texture
       # テクスチャ生成
-      @_texture = SDL.create_texture_from_surface(Window._renderer, @_surface)
+      @_texture = Image._create_gl_texture(self.width, self.height, @_surface)
     end
 
     # ピクセルに色を置く
