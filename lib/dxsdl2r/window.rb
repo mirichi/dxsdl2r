@@ -10,7 +10,7 @@ module DXRuby
                                   SDL::WINDOWPOS_UNDEFINED,
                                   @_width,
                                   @_height,
-                                  SDL::WINDOW_HIDDEN)
+                                  SDL::WINDOW_HIDDEN | SDL::WINDOW_OPENGL)
     @_context = SDL.gl_create_context(@_window)
     SDL.gl_make_current(@_window, @_context)
     SDL.gl_set_swap_interval(0)
